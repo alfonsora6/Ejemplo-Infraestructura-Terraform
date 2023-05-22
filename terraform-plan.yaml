@@ -1,0 +1,40 @@
+name: "Terraform Plan"
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: TerraformInstaller@0
+  displayName: "Install Terraform"
+  inputs:
+    terraformVersion: '1.4.6'
+    terraformDownloadLocation: 'https://releases.hashicorp.com/terraform'
+
+- script: |
+    az login --use-device-code
+  displayName: 'Azure Login'
+
+- script: |
+    cd Templates
+    terraform init
+    terraform plan -out=terraform.tfplan
+  displayName: 'Terraform Plan'
+  workingDirectory: '$(Build.SourcesDirectory)'
+
+  
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.SourcesDirectory)/Templates/terraform.tfplan'
+    artifactName: 'terraformPlan'
+    publishLocation: 'Container'
+  displayName: 'Publish Terraform plan'
+
+#az login --service-principal --username $(servicePrincipalId) --password $(servicePrincipalKey) --tenant $(tenantId)
+#az login --use-device-code
+
+- template: terraform-apply.yaml
