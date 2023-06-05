@@ -15,26 +15,33 @@ steps:
     terraformVersion: '1.4.6'
     terraformDownloadLocation: 'https://releases.hashicorp.com/terraform'
 
-- script: |
-    az login --use-device-code
-  displayName: 'Azure Login'
 
-- script: |
-    cd Templates
-    terraform init
-    terraform plan -out=terraform.tfplan
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Templates'
+    backendServiceArm: 'Suscripción de Azure 1(d26cf210-db93-4db7-9cea-d9ddce1cd55d)'
+    backendAzureRmResourceGroupName: 'dev1'
+    backendAzureRmStorageAccountName: 'storageiesgn'
+    backendAzureRmContainerName: 'contenedoriesgn1'
+    backendAzureRmKey: 'terraform.tfstate'
+  displayName: 'Terraform Init'
+
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Templates'
+    commandOptions: '-out=terraform.tfplan'
+    environmentServiceNameAzureRM: 'Suscripción de Azure 1(d26cf210-db93-4db7-9cea-d9ddce1cd55d)'
   displayName: 'Terraform Plan'
-  workingDirectory: '$(Build.SourcesDirectory)'
 
-  
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.SourcesDirectory)/Templates/terraform.tfplan'
     artifactName: 'terraformPlan'
     publishLocation: 'Container'
   displayName: 'Publish Terraform plan'
-
-#az login --service-principal --username $(servicePrincipalId) --password $(servicePrincipalKey) --tenant $(tenantId)
-#az login --use-device-code
 
 - template: terraform-apply.yaml
