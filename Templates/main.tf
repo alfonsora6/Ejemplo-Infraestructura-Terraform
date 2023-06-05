@@ -7,7 +7,7 @@ terraform {
     resource_group_name = "dev1"
     storage_account_name = "storageiesgn"
     container_name = "contenedoriesgn1"
-    key = "terraform.state"
+    key = "terraform.tfstate"
     }
 }
 
@@ -91,7 +91,7 @@ resource "azurerm_network_security_group" "az_net_sec_group" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "8080"
+    destination_port_range     = "${var.puerto_expuesto}"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -144,7 +144,7 @@ resource "azurerm_linux_virtual_machine" "az_linux_vm" {
   location                        = azurerm_resource_group.az_rg.location
   resource_group_name             = azurerm_resource_group.az_rg.name
   network_interface_ids           = [azurerm_network_interface.az_net_int.id]
-  size                            = "Standard_DS1_v2"
+  size                            = "${var.size}"
   computer_name                   = "${var.hostname}"
   admin_username                  = "${var.usuario}"
   admin_password                  = "${var.contrasena}"
