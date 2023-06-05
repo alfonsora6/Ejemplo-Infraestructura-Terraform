@@ -22,16 +22,18 @@ variable AzurermVirtualNetworkName {
     description= "Nombre para la red virtual de Azure"  
 }
 
-# Credenciales Linux
+# Configuración VM
 
 variable usuario {
     type = string 
-    default = "alfonso" 
+    default = "alfonso"
+    sensitive = true 
 }
 
 variable contrasena {
     type = string 
-    default = "Usuario1!" 
+    default = "Usuario1!"
+    sensitive = true
 }
 
 variable hostname {
@@ -42,6 +44,11 @@ variable hostname {
 variable ip_privada {
   type = string
   default = "10.0.2.5"
+}
+
+variable size {
+    type = string
+    default = "Standard_DS1_v2"
 }
 
 # Variables httpd
