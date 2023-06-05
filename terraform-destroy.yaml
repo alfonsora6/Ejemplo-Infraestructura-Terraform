@@ -1,0 +1,25 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Templates'
+    backendServiceArm: 'Suscripción de Azure 1(d26cf210-db93-4db7-9cea-d9ddce1cd55d)'
+    backendAzureRmResourceGroupName: 'dev1'
+    backendAzureRmStorageAccountName: 'storageiesgn'
+    backendAzureRmContainerName: 'contenedoriesgn1'
+    backendAzureRmKey: 'terraform.tfstate'
+  displayName: 'Terraform Init'
+- task: TerraformTaskV4@4
+  inputs:
+    provider: 'azurerm'
+    command: 'destroy'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Templates'
+    commandOptions: '--auto-approve'
+    environmentServiceNameAzureRM: 'Suscripción de Azure 1(d26cf210-db93-4db7-9cea-d9ddce1cd55d)'
+  displayName: 'Terraform Destroy'
